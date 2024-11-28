@@ -29,9 +29,8 @@ function useFetchShortenUrl() {
       const options = {
         method: "POST",
         headers: {
-          "x-rapidapi-key":
-            "a28f2558famsh6c0a7fb0f1ce6c0p1a4abbjsn82092b9aa7ad",
-          "x-rapidapi-host": "url-shortener-service.p.rapidapi.com",
+          "x-rapidapi-key": `${import.meta.env.VITE_API_KEY}`,
+          "x-rapidapi-host": `${import.meta.env.VITE_API_URL}`,
         },
         body: data,
       };
@@ -40,8 +39,8 @@ function useFetchShortenUrl() {
         setIsLoading(true);
         const response = await fetch(apiUrl, options);
         if (!response.ok) {
-          setIsError(true);
-          setError("Invalid link.");
+          if (response.status === 400) throw new Error("Invalid link.");
+          return;
         }
         const result = (await response.json()) as { result_url: string };
         setStoredUrls((prevStoredUrls) => {
@@ -53,8 +52,10 @@ function useFetchShortenUrl() {
         setUrls({ originalUrl: url, shortenedUrl: result.result_url });
         urlInputRef.current!.value = "";
       } catch (error) {
-        setIsError(true);
-        console.error(error);
+        if (error instanceof Error) {
+          setIsError(true);
+          setError(error.message);
+        }
       } finally {
         setIsLoading(false);
       }
