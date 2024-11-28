@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import ReactDOM from "react-dom";
-import closeIcon from "../assets/images/XMark.svg";
 import Button from "./Button";
-import logo from "../assets/images/logo.svg";
 const Modal = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
